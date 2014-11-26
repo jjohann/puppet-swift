@@ -19,7 +19,8 @@
 # Copyright 2011 Puppetlabs Inc, unless otherwise noted.
 #
 class swift::proxy::cache(
-  $memcache_servers = ['127.0.0.1:11211']
+  $memcache_servers = ['127.0.0.1:11211'],
+  $max_connections = 2
 ) {
 
   # require the memcached class if its on the same machine
