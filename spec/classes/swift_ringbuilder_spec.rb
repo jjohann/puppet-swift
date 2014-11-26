@@ -55,6 +55,29 @@ describe 'swift::ringbuilder' do
       end
 
     end
+    describe 'with more parameter overrides' do
+
+      let :params do
+        {:part_power     => '20',
+         :part_power_ac  => '16',
+         :replicas       => '5',
+         :min_part_hours => '2'
+        }
+      end
+
+      it { should contain_swift__ringbuilder__create('object').with(
+        :part_power     => '20',
+        :replicas       => '5',
+        :min_part_hours => '2'
+      )}
+      ['account', 'container'].each do |type|
+        it { should contain_swift__ringbuilder__create(type).with(
+          :part_power     => '16',
+          :replicas       => '5',
+          :min_part_hours => '2'
+        )}
+      end
+    end
     describe 'when specifying ring devices' do
       let :pre_condition do
          'class { memcached: max_memory => 1}

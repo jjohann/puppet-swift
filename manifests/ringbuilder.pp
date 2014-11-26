@@ -7,6 +7,9 @@
 # == Parameters
 #  [*part_power*] The total number of partitions that should exist in the ring.
 #    This is expressed as a power of 2.
+#    This is expressed as a power of 2.
+#  [*part_power_ac*] Optional. The total number of partitions that should exist in the ring for account/container servers.
+#    This is expressed as a power of 2.  Default is $part_power.
 #  [*replicas*] Numer of replicas that should be maintained of each stored object.
 #  [*min_part_hours*] Minimum amount of time before partitions can be moved.
 #
@@ -26,14 +29,26 @@
 #
 class swift::ringbuilder(
   $part_power = undef,
+  $part_power_ac = undef,
   $replicas = undef,
   $min_part_hours = undef
 ) {
 
   Class['swift'] -> Class['swift::ringbuilder']
 
-  swift::ringbuilder::create{ ['object', 'account', 'container']:
+  swift::ringbuilder::create{ 'object':
     part_power     => $part_power,
+    replicas       => $replicas,
+    min_part_hours => $min_part_hours,
+  }
+
+  if $part_power_ac == undef {
+    $part_powerac = $part_power
+  } else {
+    $part_powerac = $part_power_ac
+  }
+  swift::ringbuilder::create{ ['account', 'container']:
+    part_power     => $part_powerac,
     replicas       => $replicas,
     min_part_hours => $min_part_hours,
   }
