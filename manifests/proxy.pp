@@ -37,6 +37,9 @@
 # [*log_name*]
 #  Configures log_name for swift proxy-server.
 #  Optional. Defaults to proxy-server
+# [*dir_conf]
+#  Optional.  Set to a directory path to configure as a Paste.Deploy directory 
+#  config (easier to augment config with outside modules.)  i.e. proxy-server.conf.d
 #
 # == Examples
 #
@@ -66,7 +69,8 @@ class swift::proxy(
   $read_affinity = undef,
   $write_affinity = undef,
   $write_affinity_node_count = undef,
-  $package_ensure = 'present'
+  $package_ensure = $swift::package_ensure,
+  $dir_conf = undef,
 ) {
 
   include swift::params
@@ -103,7 +107,17 @@ class swift::proxy(
     name   => $::swift::params::proxy_package_name,
   }
 
+  if $dir_conf != undef {
+    file { $dir_conf:
+      ensure => directory,
+      owner  => 'swift',
+      group  => 'swift',
+    }
+    $conf_path = "${dir_conf}/00-base.conf"
+  }
+
   concat { '/etc/swift/proxy-server.conf':
+    path    => $conf_path,
     owner   => 'swift',
     group   => 'swift',
     mode    => '0660',
