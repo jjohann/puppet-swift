@@ -43,10 +43,10 @@ define swift::storage::xfs(
   # so we format it. If device has a valid XFS FS, command returns 0
   # So we do NOT touch it.
   exec { "mkfs-${name}":
-    command => "mkfs.xfs -f -i size=${byte_size} ${target_device}",
+    command => "mkfs.xfs -f -i size=${byte_size} ${target_device}1",
     path    => ['/sbin/', '/usr/sbin/'],
     require => Package['xfsprogs'],
-    unless  => "xfs_admin -l ${target_device}",
+    unless  => "xfs_admin -l ${target_device}1",
   }
 
   swift::storage::mount { $name:

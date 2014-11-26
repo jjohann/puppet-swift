@@ -16,7 +16,7 @@ describe 'swift::storage::xfs' do
 
     [{},
      {
-       :device       => 'some_device',
+       :device       => 'some_device1',
        :byte_size    => 1,
        :mnt_base_dir => '/mnt/foo',
        :loopback     => true
@@ -33,7 +33,7 @@ describe 'swift::storage::xfs' do
         end
 
         it { should contain_exec("mkfs-foo").with(
-          :command     => "mkfs.xfs -f -i size=#{param_hash[:byte_size]} #{param_hash[:device]}",
+          :command     => "mkfs.xfs -f -i size=#{param_hash[:byte_size]} #{param_hash[:device]}1",
           :path        => ['/sbin/', '/usr/sbin/'],
           :require     => 'Package[xfsprogs]'
         )}

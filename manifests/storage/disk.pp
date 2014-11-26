@@ -49,7 +49,21 @@ define swift::storage::disk(
   exec { "create_partition_label-${name}":
     command     => "parted -s ${base_dir}/${name} mklabel gpt",
     path        => ['/usr/bin/', '/sbin','/bin'],
-    onlyif      => ["test -b ${base_dir}/${name}","parted ${base_dir}/${name} print|tail -1|grep 'Error'"],
+    unless      => ["parted ${base_dir}/${name} print|grep 'primary'"],
+  }
+
+  exec { "create_partition-${name}":
+    command     => "parted -s ${base_dir}/${name} mkpart primary 512 -- -1",
+    path        => ['/usr/bin/', '/sbin','/bin'],
+    subscribe   => Exec["create_partition_label-${name}"],
+    refreshonly => true
+  }
+
+  exec { "align_partition-${name}":
+    command     => "parted -s ${base_dir}/${name} align-check optimal 1",
+    path        => ['/usr/bin/', '/sbin','/bin'],
+    subscribe   => Exec["create_partition-${name}"],
+    refreshonly => true
   }
 
   swift::storage::xfs { $name:
@@ -57,7 +71,7 @@ define swift::storage::disk(
     mnt_base_dir => $mnt_base_dir,
     byte_size    => $byte_size,
     loopback     => false,
-    subscribe    => Exec["create_partition_label-${name}"],
+    subscribe    => Exec["align_partition-${name}"],
   }
 
 }
