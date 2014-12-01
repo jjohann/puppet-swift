@@ -1,25 +1,16 @@
 class swift::storage::account(
-  $package_ensure = 'present'
+  $package_ensure = 'present',
+  $service_ensure = undef
 ) {
   swift::storage::generic { 'account':
     package_ensure => $package_ensure,
+    service_ensure => $service_ensure,
+  }
+  swift::service{ 'account-reaper':
+    service_name => $::swift::params::account_reaper_service_name,
   }
 
-  include swift::params
-
-  service { 'swift-account-reaper':
-    ensure    => running,
-    name      => $::swift::params::account_reaper_service_name,
-    enable    => true,
-    provider  => $::swift::params::service_provider,
-    require   => Package['swift-account'],
-  }
-
-  service { 'swift-account-auditor':
-    ensure    => running,
-    name      => $::swift::params::account_auditor_service_name,
-    enable    => true,
-    provider  => $::swift::params::service_provider,
-    require   => Package['swift-account'],
+  swift::service{ 'account-auditor':
+    service_name => $::swift::params::account_auditor_service_name,
   }
 }

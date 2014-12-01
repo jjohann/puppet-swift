@@ -23,7 +23,8 @@ define swift::storage::server(
   $log_address            = '/dev/log',
   $log_name               = "${type}-server",
   # this parameters needs to be specified after type and name
-  $config_file_path       = "${type}-server/${name}.conf"
+  $config_file_path       = "${type}-server/${name}.conf",
+  $service_ensure         = undef,
 ) {
 
   # Warn if ${type-server} isn't included in the pipeline
@@ -35,7 +36,11 @@ define swift::storage::server(
     warning("swift storage server ${type} must specify ${type}-server")
   }
 
-  include "swift::storage::${type}"
+  if !defined(Class["swift::storage::${type}"]) {
+    class { "swift::storage::${type}":
+      service_ensure => $service_ensure,
+    }
+  }
   include concat::setup
 
   validate_re($name, '^\d+$')

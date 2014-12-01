@@ -19,7 +19,8 @@
 # Copyright 2011 Puppetlabs Inc, unless otherwise noted.
 define swift::storage::generic(
   $package_ensure   = 'present',
-  $service_provider = $::swift::params::service_provider
+  $service_provider = $::swift::params::service_provider,
+  $service_ensure   = undef,
 ) {
 
   include swift::params
@@ -42,22 +43,14 @@ define swift::storage::generic(
     group  => 'swift',
   }
 
-  service { "swift-${name}":
-    ensure    => running,
-    name      => inline_template("<%= scope.lookupvar('::swift::params::${name}_service_name') %>"),
-    enable    => true,
-    hasstatus => true,
-    provider  => $service_provider,
-    subscribe => Package["swift-${name}"],
+  swift::service{ $name: 
+    service_name => inline_template("<%= scope.lookupvar('::swift::params::${name}_service_name') %>"),
+    ensure       => $service_ensure,
+    provider     => $service_provider,
   }
-
-  service { "swift-${name}-replicator":
-    ensure    => running,
-    name      => inline_template("<%= scope.lookupvar('::swift::params::${name}_replicator_service_name') %>"),
-    enable    => true,
-    hasstatus => true,
-    provider  => $service_provider,
-    subscribe => Package["swift-${name}"],
+  swift::service{ "${name}-replicator":
+    service_name => inline_template("<%= scope.lookupvar('::swift::params::${name}_replicator_service_name') %>"),
+    provider     => $service_provider,
   }
 
 }

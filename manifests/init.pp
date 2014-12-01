@@ -11,6 +11,11 @@
 # [*client_package_ensure*] The ensure state for the swift client package.
 #   (Optional) Defaults to present.
 #
+# [*swift_init*] Allows services to be started using swift-init instead of distro init scripts.
+#   May be set to true to use swift-init on all services, or 'main' to only start up the main
+#   swift processes (similar to the swift-init server parameter.)
+#   (Optional) Defaults to false (use distro init scripts.)
+#
 # == Dependencies
 #
 #   Class['ssh::server::install']
@@ -27,6 +32,7 @@ class swift(
   $swift_hash_suffix,
   $package_ensure        = 'present',
   $client_package_ensure = 'present',
+  $swift_init            = false,
 ) {
 
   include swift::params
