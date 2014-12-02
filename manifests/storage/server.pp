@@ -25,6 +25,7 @@ define swift::storage::server(
   # this parameters needs to be specified after type and name
   $config_file_path       = "${type}-server/${name}.conf",
   $service_ensure         = undef,
+  $package_ensure         = 'present',
 ) {
 
   # Warn if ${type-server} isn't included in the pipeline
@@ -39,6 +40,7 @@ define swift::storage::server(
   if !defined(Class["swift::storage::${type}"]) {
     class { "swift::storage::${type}":
       service_ensure => $service_ensure,
+      package_ensure => $package_ensure,
     }
   }
   include concat::setup

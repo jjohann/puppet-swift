@@ -23,7 +23,7 @@ class swift::storage::container(
     service_name => $::swift::params::container_auditor_service_name,
   }
 
-  if $::operatingsystem == 'Ubuntu' and $swift::swift_init == false {
+  if $::operatingsystem == 'Ubuntu' and $::swift::swift_init == false {
     # The following service conf is missing in Ubuntu 12.04
     file { '/etc/init/swift-container-sync.conf':
       source  => 'puppet:///modules/swift/swift-container-sync.conf.upstart',

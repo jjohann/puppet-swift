@@ -42,13 +42,8 @@ class swift::ringbuilder(
     min_part_hours => $min_part_hours,
   }
 
-  if $part_power_ac == undef {
-    $part_powerac = $part_power
-  } else {
-    $part_powerac = $part_power_ac
-  }
   swift::ringbuilder::create{ ['account', 'container']:
-    part_power     => $part_powerac,
+    part_power     => $part_power_ac ? {undef => $part_power, default => $part_power_ac},
     replicas       => $replicas,
     min_part_hours => $min_part_hours,
   }
