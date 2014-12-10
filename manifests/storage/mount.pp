@@ -32,7 +32,7 @@ define swift::storage::mount(
 
   mount { "${mnt_base_dir}/${name}":
     ensure  => present,
-    device  => $device,
+    device  => "${device}1",
     fstype  => $fstype,
     options => "${options},${fsoptions}",
     require => File["${mnt_base_dir}/${name}"]
